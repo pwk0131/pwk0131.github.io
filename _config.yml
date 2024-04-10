@@ -14,7 +14,7 @@ timezone: Asia/Seoul
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: PwK # the main title
+title: pwk # the main title
 
 tagline: Java,C#,C++ # it will display as the sub-title
 
