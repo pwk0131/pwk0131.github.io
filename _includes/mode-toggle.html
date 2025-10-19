@@ -79,7 +79,7 @@
     }
 
     get mode() {
-      return sessionStorage.getItem(ModeToggle.MODE_KEY);
+      return localStorage.getItem(ModeToggle.MODE_KEY);
     }
 
     /* get the current mode on screen */
@@ -93,17 +93,17 @@
 
     setDark() {
       document.documentElement.setAttribute(ModeToggle.MODE_ATTR, ModeToggle.DARK_MODE);
-      sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE);
+      localStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE);
     }
 
     setLight() {
       document.documentElement.setAttribute(ModeToggle.MODE_ATTR, ModeToggle.LIGHT_MODE);
-      sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE);
+      localStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE);
     }
 
     clearMode() {
       document.documentElement.removeAttribute(ModeToggle.MODE_ATTR);
-      sessionStorage.removeItem(ModeToggle.MODE_KEY);
+      localStorage.removeItem(ModeToggle.MODE_KEY);
     }
 
     /* Notify another plugins that the theme mode has changed */
