@@ -872,7 +872,8 @@ $btn-mb: 0.5rem;
     .mode-toggle {
       padding: 0;
       border: 0;
-
+      margin-right: $sb-btn-gap;
+      
       @extend %button;
       @extend %sidebar-links;
       @extend %sidebar-link-hover;

@@ -16,7 +16,7 @@ timezone: Asia/Seoul
 
 title: pwk # the main title
 
-tagline: catThunder # it will display as the sub-title
+tagline: pwk's blog # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
   A minimal, responsive and feature-rich Jekyll theme for technical writing.
@@ -88,7 +88,7 @@ theme_mode: # [light | dark]
 #img_cdn: "https://chirpy-img.netlify.app"
 
 # the avatar on sidebar, support local or CORS resources
-avatar: '/assets/img/CatThunder2.png'
+avatar: '/assets/img/profile.png'
 
 # The URL of the site-wide social preview image used in SEO `og:image` meta tag.
 # It can be overridden by a customized `page.image` in front matter.
