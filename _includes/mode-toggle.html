@@ -21,39 +21,26 @@
     }
 
     constructor() {
-      if (this.hasMode) {
-        if (this.isDarkMode) {
-          if (!this.isSysDarkPrefer) {
-            this.setDark();
-          }
-        } else {
-          if (this.isSysDarkPrefer) {
-            this.setLight();
-          }
-        }
+      // 1. 페이지 로드 시 sessionStorage 값을 무조건 적용합니다.
+      if (this.isDarkMode) {
+        this.setDark();
+      } else if (this.isLightMode) {
+        this.setLight();
       }
 
       let self = this;
 
-      /* always follow the system prefers */
       this.sysDarkPrefers.addEventListener('change', () => {
+        // 사용자가 직접 모드를 선택한 경우(sessionStorage에 값이 있는 경우)에는
+        // 시스템 설정 변경을 무시합니다.
         if (self.hasMode) {
-          if (self.isDarkMode) {
-            if (!self.isSysDarkPrefer) {
-              self.setDark();
-            }
-          } else {
-            if (self.isSysDarkPrefer) {
-              self.setLight();
-            }
-          }
-
-          self.clearMode();
+          return;
         }
 
+        // 사용자가 선택하지 않았을 때만 시스템 설정을 따릅니다.
         self.notify();
       });
-    } /* constructor() */
+    }
 
     get sysDarkPrefers() {
       return window.matchMedia('(prefers-color-scheme: dark)');
@@ -79,13 +66,9 @@
       return sessionStorage.getItem(ModeToggle.MODE_KEY);
     }
 
-    /* get the current mode on screen */
     get modeStatus() {
-      if (this.isDarkMode || (!this.hasMode && this.isSysDarkPrefer)) {
-        return ModeToggle.DARK_MODE;
-      } else {
-        return ModeToggle.LIGHT_MODE;
-      }
+      const mode = document.documentElement.getAttribute(ModeToggle.MODE_ATTR);
+      return mode ? mode : (this.isSysDarkPrefer ? ModeToggle.DARK_MODE : ModeToggle.LIGHT_MODE);
     }
 
     setDark() {
@@ -103,7 +86,6 @@
       sessionStorage.removeItem(ModeToggle.MODE_KEY);
     }
 
-    /* Notify another plugins that the theme mode has changed */
     notify() {
       window.postMessage(
         {
@@ -114,32 +96,16 @@
       );
     }
 
+    // 2. 버튼 클릭 시 시스템 설정과 상관없이 무조건 라이트/다크를 전환합니다.
     flipMode() {
-      if (this.hasMode) {
-        if (this.isSysDarkPrefer) {
-          if (this.isLightMode) {
-            this.clearMode();
-          } else {
-            this.setLight();
-          }
-        } else {
-          if (this.isDarkMode) {
-            this.clearMode();
-          } else {
-            this.setDark();
-          }
-        }
+      if (this.modeStatus === ModeToggle.DARK_MODE) {
+        this.setLight();
       } else {
-        if (this.isSysDarkPrefer) {
-          this.setLight();
-        } else {
-          this.setDark();
-        }
+        this.setDark();
       }
-
       this.notify();
-    } /* flipMode() */
-  } /* ModeToggle */
+    }
+  }
 
   const modeToggle = new ModeToggle();
 </script>
