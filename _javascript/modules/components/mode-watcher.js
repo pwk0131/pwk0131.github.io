@@ -2,9 +2,6 @@
  * Add listener for theme mode toggle
  */
 
-// 이 파일의 내용은 mode-toggle.html로 옮겨졌습니다.
-
-/**
 const $toggleElem = $('.mode-toggle');
 
 export function modeWatcher() {
@@ -23,5 +20,3 @@ export function modeWatcher() {
     $btn.trigger('blur'); // remove the clicking outline
   });
 }
-
-*/

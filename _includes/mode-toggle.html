@@ -1,45 +1,137 @@
 <!-- Switch the mode between dark and light. -->
 
-<script>
-  (function () {
-    const MODE_KEY = 'mode';
-    const MODE_ATTR = 'data-mode';
-    const DARK_MODE = 'dark';
-    const LIGHT_MODE = 'light';
-    const ID = 'mode-toggle';
+<!-- Switch the mode between dark and light. -->
 
-    function getMode() {
-      return localStorage.getItem(MODE_KEY);
+<script type="text/javascript">
+  class ModeToggle {
+    static get MODE_KEY() {
+      return 'mode';
+    }
+    static get MODE_ATTR() {
+      return 'data-mode';
+    }
+    static get DARK_MODE() {
+      return 'dark';
+    }
+    static get LIGHT_MODE() {
+      return 'light';
+    }
+    static get ID() {
+      return 'mode-toggle';
     }
 
-    function setMode(mode) {
-      document.documentElement.setAttribute(MODE_ATTR, mode);
-      localStorage.setItem(MODE_KEY, mode);
+    constructor() {
+
+      if (!this.hasMode) {
+        this.setLight();
+      }
+
+      if (this.hasMode) {
+        if (this.isDarkMode) {
+          if (!this.isSysDarkPrefer) {
+            this.setDark();
+          }
+        } else {
+          if (this.isSysDarkPrefer) {
+            this.setLight();
+          }
+        }
+      }
+
+      let self = this;
+
+      /* always follow the system prefers */
+      this.sysDarkPrefers.addEventListener('change', () => {
+        if (self.hasMode) {
+          if (self.isDarkMode) {
+            if (!self.isSysDarkPrefer) {
+              self.setDark();
+            }
+          } else {
+            if (self.isSysDarkPrefer) {
+              self.setLight();
+            }
+          }
+
+          self.clearMode();
+        }
+
+        self.notify();
+      });
+    } /* constructor() */
+
+    get sysDarkPrefers() {
+      return window.matchMedia('(prefers-color-scheme: dark)');
     }
 
-    function flipMode() {
-      if (document.documentElement.getAttribute(MODE_ATTR) === DARK_MODE) {
-        setMode(LIGHT_MODE);
+    get isSysDarkPrefer() {
+      return this.sysDarkPrefers.matches;
+    }
+
+    get isDarkMode() {
+      return this.mode === ModeToggle.DARK_MODE;
+    }
+
+    get isLightMode() {
+      return this.mode === ModeToggle.LIGHT_MODE;
+    }
+
+    get hasMode() {
+      return this.mode != null;
+    }
+
+    get mode() {
+      return localStorage.getItem(ModeToggle.MODE_KEY);
+    }
+
+    /* get the current mode on screen */
+    get modeStatus() {
+      if (this.isDarkMode || (!this.hasMode && this.isSysDarkPrefer)) {
+        return ModeToggle.DARK_MODE;
       } else {
-        setMode(DARK_MODE);
+        return ModeToggle.LIGHT_MODE;
       }
     }
 
-    // 초기화: 페이지 로드 시 저장된 테마 적용
-    const storedMode = getMode();
-    if (!storedMode) {
-      setMode(LIGHT_MODE); // 저장된 값이 없으면 라이트 모드를 기본으로 설정
-    } else {
-      setMode(storedMode); // 저장된 값이 있으면 그 값을 적용
+    setDark() {
+      document.documentElement.setAttribute(ModeToggle.MODE_ATTR, ModeToggle.DARK_MODE);
+      localStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE);
     }
 
-    // DOM이 준비되면 버튼에 클릭 이벤트 직접 추가
-    document.addEventListener('DOMContentLoaded', function () {
-      const toggleBtn = document.querySelector('.mode-toggle');
-      if (toggleBtn) {
-        toggleBtn.addEventListener('click', flipMode);
-      }
-    });
+    setLight() {
+      document.documentElement.setAttribute(ModeToggle.MODE_ATTR, ModeToggle.LIGHT_MODE);
+      localStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE);
+    }
 
-  })();
+    clearMode() {
+      document.documentElement.removeAttribute(ModeToggle.MODE_ATTR);
+      localStorage.removeItem(ModeToggle.MODE_KEY);
+    }
+
+    /* Notify another plugins that the theme mode has changed */
+    notify() {
+      window.postMessage(
+        {
+          direction: ModeToggle.ID,
+          message: this.modeStatus
+        },
+        '*'
+      );
+    }
+
+    flipMode() {
+      // 현재 화면에 표시된 모드가 'dark'인지 확인합니다.
+      if (this.modeStatus === ModeToggle.DARK_MODE) {
+        // 다크 모드이면 라이트 모드로 설정합니다.
+        this.setLight();
+      } else {
+        // 라이트 모드이면 다크 모드로 설정합니다.
+        this.setDark();
+      }
+
+      this.notify();
+    } /* flipMode() */
+  } /* ModeToggle */
+
+  const modeToggle = new ModeToggle();
 </script>
