@@ -21,26 +21,39 @@
     }
 
     constructor() {
-      // 1. 페이지 로드 시 sessionStorage 값을 무조건 적용합니다.
-      if (this.isDarkMode) {
-        this.setDark();
-      } else if (this.isLightMode) {
-        this.setLight();
+      if (this.hasMode) {
+        if (this.isDarkMode) {
+          if (!this.isSysDarkPrefer) {
+            this.setDark();
+          }
+        } else {
+          if (this.isSysDarkPrefer) {
+            this.setLight();
+          }
+        }
       }
 
       let self = this;
 
+      /* always follow the system prefers */
       this.sysDarkPrefers.addEventListener('change', () => {
-        // 사용자가 직접 모드를 선택한 경우(sessionStorage에 값이 있는 경우)에는
-        // 시스템 설정 변경을 무시합니다.
         if (self.hasMode) {
-          return;
+          if (self.isDarkMode) {
+            if (!self.isSysDarkPrefer) {
+              self.setDark();
+            }
+          } else {
+            if (self.isSysDarkPrefer) {
+              self.setLight();
+            }
+          }
+
+          self.clearMode();
         }
 
-        // 사용자가 선택하지 않았을 때만 시스템 설정을 따릅니다.
         self.notify();
       });
-    }
+    } /* constructor() */
 
     get sysDarkPrefers() {
       return window.matchMedia('(prefers-color-scheme: dark)');
