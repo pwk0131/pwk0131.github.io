@@ -21,11 +21,6 @@
     }
 
     constructor() {
-
-      if (!this.hasMode) {
-        this.setLight();
-      }
-
       if (this.hasMode) {
         if (this.isDarkMode) {
           if (!this.isSysDarkPrefer) {
@@ -81,7 +76,7 @@
     }
 
     get mode() {
-      return localStorage.getItem(ModeToggle.MODE_KEY);
+      return sessionStorage.getItem(ModeToggle.MODE_KEY);
     }
 
     /* get the current mode on screen */
@@ -95,17 +90,17 @@
 
     setDark() {
       document.documentElement.setAttribute(ModeToggle.MODE_ATTR, ModeToggle.DARK_MODE);
-      localStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE);
+      sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE);
     }
 
     setLight() {
       document.documentElement.setAttribute(ModeToggle.MODE_ATTR, ModeToggle.LIGHT_MODE);
-      localStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE);
+      sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE);
     }
 
     clearMode() {
       document.documentElement.removeAttribute(ModeToggle.MODE_ATTR);
-      localStorage.removeItem(ModeToggle.MODE_KEY);
+      sessionStorage.removeItem(ModeToggle.MODE_KEY);
     }
 
     /* Notify another plugins that the theme mode has changed */
@@ -120,13 +115,26 @@
     }
 
     flipMode() {
-      // 현재 화면에 표시된 모드가 'dark'인지 확인합니다.
-      if (this.modeStatus === ModeToggle.DARK_MODE) {
-        // 다크 모드이면 라이트 모드로 설정합니다.
-        this.setLight();
+      if (this.hasMode) {
+        if (this.isSysDarkPrefer) {
+          if (this.isLightMode) {
+            this.clearMode();
+          } else {
+            this.setLight();
+          }
+        } else {
+          if (this.isDarkMode) {
+            this.clearMode();
+          } else {
+            this.setDark();
+          }
+        }
       } else {
-        // 라이트 모드이면 다크 모드로 설정합니다.
-        this.setDark();
+        if (this.isSysDarkPrefer) {
+          this.setLight();
+        } else {
+          this.setDark();
+        }
       }
 
       this.notify();
