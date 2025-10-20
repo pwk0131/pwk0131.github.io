@@ -1,7 +1,7 @@
-import { modeWatcher } from '../components/mode-watcher';
+//import { modeWatcher } from '../components/mode-watcher';
 import { sidebarExpand } from '../components/sidebar';
 
 export function initSidebar() {
-  modeWatcher();
+  //modeWatcher();
   sidebarExpand();
 }
