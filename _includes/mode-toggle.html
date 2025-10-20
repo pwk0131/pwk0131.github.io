@@ -118,26 +118,13 @@
     }
 
     flipMode() {
-      if (this.hasMode) {
-        if (this.isSysDarkPrefer) {
-          if (this.isLightMode) {
-            this.clearMode();
-          } else {
-            this.setLight();
-          }
-        } else {
-          if (this.isDarkMode) {
-            this.clearMode();
-          } else {
-            this.setDark();
-          }
-        }
+      // 현재 화면에 표시된 모드가 'dark'인지 확인합니다.
+      if (this.modeStatus === ModeToggle.DARK_MODE) {
+        // 다크 모드이면 라이트 모드로 설정합니다.
+        this.setLight();
       } else {
-        if (this.isSysDarkPrefer) {
-          this.setLight();
-        } else {
-          this.setDark();
-        }
+        // 라이트 모드이면 다크 모드로 설정합니다.
+        this.setDark();
       }
 
       this.notify();
