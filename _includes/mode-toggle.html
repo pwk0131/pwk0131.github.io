@@ -1,14 +1,14 @@
 <!-- Switch the mode between dark and light. -->
 
 <script>
-  const modeToggle = (function () {
+  (function () {
     const MODE_KEY = 'mode';
     const MODE_ATTR = 'data-mode';
     const DARK_MODE = 'dark';
     const LIGHT_MODE = 'light';
     const ID = 'mode-toggle';
 
-    const sysDarkPrefers = window.matchMedia('(prefers-color-scheme: dark)');
+    let sysDarkPrefers = window.matchMedia('(prefers-color-scheme: dark)');
 
     function getMode() {
       return localStorage.getItem(MODE_KEY);
@@ -43,7 +43,7 @@
       notify();
     }
 
-    // 초기화 로직: 페이지가 로드될 때 실행됩니다.
+    // 초기화 로직: 페이지가 로드될 때 실행
     const storedMode = getMode();
     if (!storedMode) {
       setMode(LIGHT_MODE); // 저장된 값이 없으면 라이트 모드를 기본으로 설정
@@ -51,12 +51,15 @@
       setMode(storedMode); // 저장된 값이 있으면 그 값을 적용
     }
 
-    return {
-      flipMode,
-      ID,
-      DARK_MODE,
-      LIGHT_MODE
-    };
+    // 버튼에 클릭 이벤트 직접 연결
+    document.addEventListener('DOMContentLoaded', function () {
+      const toggleBtn = document.querySelector('.mode-toggle');
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+          flipMode();
+        });
+      }
+    });
+
   })();
-  
 </script>
