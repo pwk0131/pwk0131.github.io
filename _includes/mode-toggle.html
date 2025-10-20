@@ -1,6 +1,6 @@
 <!-- Switch the mode between dark and light. -->
 
-<script type="text/javascript">
+<script>
   const modeToggle = (function () {
     const MODE_KEY = 'mode';
     const MODE_ATTR = 'data-mode';
@@ -8,36 +8,23 @@
     const LIGHT_MODE = 'light';
     const ID = 'mode-toggle';
 
-    let sysDarkPrefers = window.matchMedia('(prefers-color-scheme: dark)');
+    const sysDarkPrefers = window.matchMedia('(prefers-color-scheme: dark)');
 
     function getMode() {
       return localStorage.getItem(MODE_KEY);
     }
 
-    function hasMode() {
-      return getMode() != null;
-    }
-
-    function isDarkMode() {
-      return getMode() === DARK_MODE;
-    }
-
-    function setDark() {
-      document.documentElement.setAttribute(MODE_ATTR, DARK_MODE);
-      localStorage.setItem(MODE_KEY, DARK_MODE);
-    }
-
-    function setLight() {
-      document.documentElement.setAttribute(MODE_ATTR, LIGHT_MODE);
-      localStorage.setItem(MODE_KEY, LIGHT_MODE);
+    function setMode(mode) {
+      document.documentElement.setAttribute(MODE_ATTR, mode);
+      localStorage.setItem(MODE_KEY, mode);
     }
 
     function getModeStatus() {
-      if (isDarkMode() || (!hasMode() && sysDarkPrefers.matches)) {
-        return DARK_MODE;
-      } else {
-        return LIGHT_MODE;
+      const storedMode = getMode();
+      if (storedMode) {
+        return storedMode;
       }
+      return sysDarkPrefers.matches ? DARK_MODE : LIGHT_MODE;
     }
 
     function notify() {
@@ -48,30 +35,28 @@
     }
 
     function flipMode() {
-      if (getModeStatus() === DARK_MODE) {
-        setLight();
+      if (document.documentElement.getAttribute(MODE_ATTR) === DARK_MODE) {
+        setMode(LIGHT_MODE);
       } else {
-        setDark();
+        setMode(DARK_MODE);
       }
       notify();
     }
 
-    // 초기화 로직
-    if (hasMode()) {
-      if (isDarkMode()) {
-        setDark();
-      } else {
-        setLight();
-      }
+    // 초기화 로직: 페이지가 로드될 때 실행됩니다.
+    const storedMode = getMode();
+    if (!storedMode) {
+      setMode(LIGHT_MODE); // 저장된 값이 없으면 라이트 모드를 기본으로 설정
     } else {
-      setLight(); // 기본값은 라이트 모드
+      setMode(storedMode); // 저장된 값이 있으면 그 값을 적용
     }
 
     return {
-      flipMode: flipMode,
-      DARK_MODE: DARK_MODE,
-      LIGHT_MODE: LIGHT_MODE,
-      ID: ID
+      flipMode,
+      ID,
+      DARK_MODE,
+      LIGHT_MODE
     };
   })();
+  
 </script>
