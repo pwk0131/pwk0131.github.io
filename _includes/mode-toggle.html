@@ -79,9 +79,13 @@
       return sessionStorage.getItem(ModeToggle.MODE_KEY);
     }
 
+    /* get the current mode on screen */
     get modeStatus() {
-      const mode = document.documentElement.getAttribute(ModeToggle.MODE_ATTR);
-      return mode ? mode : (this.isSysDarkPrefer ? ModeToggle.DARK_MODE : ModeToggle.LIGHT_MODE);
+      if (this.isDarkMode || (!this.hasMode && this.isSysDarkPrefer)) {
+        return ModeToggle.DARK_MODE;
+      } else {
+        return ModeToggle.LIGHT_MODE;
+      }
     }
 
     setDark() {
@@ -99,6 +103,7 @@
       sessionStorage.removeItem(ModeToggle.MODE_KEY);
     }
 
+    /* Notify another plugins that the theme mode has changed */
     notify() {
       window.postMessage(
         {
@@ -109,16 +114,32 @@
       );
     }
 
-    // 2. 버튼 클릭 시 시스템 설정과 상관없이 무조건 라이트/다크를 전환합니다.
     flipMode() {
-      if (this.modeStatus === ModeToggle.DARK_MODE) {
-        this.setLight();
+      if (this.hasMode) {
+        if (this.isSysDarkPrefer) {
+          if (this.isLightMode) {
+            this.clearMode();
+          } else {
+            this.setLight();
+          }
+        } else {
+          if (this.isDarkMode) {
+            this.clearMode();
+          } else {
+            this.setDark();
+          }
+        }
       } else {
-        this.setDark();
+        if (this.isSysDarkPrefer) {
+          this.setLight();
+        } else {
+          this.setDark();
+        }
       }
+
       this.notify();
-    }
-  }
+    } /* flipMode() */
+  } /* ModeToggle */
 
   const modeToggle = new ModeToggle();
 </script>
